@@ -1,0 +1,19 @@
+#!/usr/bin/env sh
+
+APPNAME=$(basename `pwd`)
+
+# Build linux version
+GOOS=linux GOARCH=amd64 go build -v .
+mkdir -p dist/linux-amd64
+mv $APPNAME dist/linux-amd64/
+cd dist/linux-amd64
+zip $APPNAME.zip $APPNAME
+cd ../../
+
+# Build for local platform
+GOOS=darwin GOARCH=amd64 go build -v .
+mkdir -p dist/darwin-amd64
+mv $APPNAME dist/darwin-amd64/
+cd dist/darwin-amd64
+zip $APPNAME.zip $APPNAME
+cd ../../
