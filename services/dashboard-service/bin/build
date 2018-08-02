@@ -1,0 +1,25 @@
+#!/usr/bin/env sh
+
+APPNAME=$(basename `pwd`)
+
+# Bundle web assets
+echo "Bundling web assets..."
+rice embed-go
+
+# Build linux version
+echo "Building Linux..."
+GOOS=linux GOARCH=amd64 go build -v .
+mkdir -p dist/linux-amd64
+mv $APPNAME dist/linux-amd64/
+cd dist/linux-amd64
+zip $APPNAME.zip $APPNAME
+cd ../../
+
+# Build for local platform
+echo "Building Darwin..."
+GOOS=darwin GOARCH=amd64 go build -v .
+mkdir -p dist/darwin-amd64
+mv $APPNAME dist/darwin-amd64/
+cd dist/darwin-amd64
+zip $APPNAME.zip $APPNAME
+cd ../../
