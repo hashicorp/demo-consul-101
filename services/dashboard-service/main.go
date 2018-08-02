@@ -15,12 +15,14 @@ import (
 	"github.com/graarh/golang-socketio/transport"
 )
 
+var countingServiceURL string
+var port string
+
 func main() {
-	port := os.Getenv("PORT")
-	if port == "" {
-		port = "80"
-	}
+	port = getEnvOrDefault("PORT", "80")
 	portWithColon := fmt.Sprintf(":%s", port)
+
+	countingServiceURL = getEnvOrDefault("COUNTING_SERVICE_URL", "http://localhost:9001")
 
 	fmt.Printf("Starting server on http://0.0.0.0:%s\n(Pass as PORT environment variable)\n", port)
 	router := mux.NewRouter()
@@ -29,6 +31,13 @@ func main() {
 	router.PathPrefix("/").Handler(http.FileServer(rice.MustFindBox("assets").HTTPBox()))
 
 	log.Fatal(http.ListenAndServe(portWithColon, router))
+}
+
+func getEnvOrDefault(key, fallback string) string {
+	if value, ok := os.LookupEnv(key); ok {
+		return value
+	}
+	return fallback
 }
 
 // HealthHandler returns a succesful status and a message.
@@ -73,7 +82,7 @@ type Count struct {
 }
 
 func getAndParseCount() (Count, error) {
-	url := "http://localhost:9001"
+	url := countingServiceURL
 
 	httpClient := http.Client{
 		Timeout: time.Second * 2, // Maximum of 2 secs
