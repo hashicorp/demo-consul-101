@@ -24,7 +24,10 @@ func main() {
 
 	countingServiceURL = getEnvOrDefault("COUNTING_SERVICE_URL", "http://localhost:9001")
 
-	fmt.Printf("Starting server on http://0.0.0.0:%s\n(Pass as PORT environment variable)\n", port)
+	fmt.Printf("Starting server on http://0.0.0.0:%s\n", port)
+	fmt.Println("(Pass as PORT environment variable)")
+	fmt.Printf("Using counting service at %s\n", countingServiceURL)
+
 	router := mux.NewRouter()
 	router.PathPrefix("/socket.io/").Handler(startWebsocket())
 	router.HandleFunc("/health", HealthHandler)
