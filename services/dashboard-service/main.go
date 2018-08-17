@@ -108,6 +108,7 @@ func getAndParseCount() (Count, error) {
 		return Count{}, readErr
 	}
 
+	defer res.Body.Close()
 	return parseCount(body)
 }
 
