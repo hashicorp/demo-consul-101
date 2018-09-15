@@ -1,0 +1,14 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: dns
+spec:
+  template:
+    spec:
+      containers:
+      - name: dns
+        image: anubhavmishra/tiny-tools
+        command: ["dig",  "counting.service.consul"]
+      restartPolicy: Never
+  backoffLimit: 4
+

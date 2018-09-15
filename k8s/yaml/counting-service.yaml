@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: counting-service-deployment
+spec:
+  selector:
+    matchLabels:
+      app: counting-service
+  minReadySeconds: 5
+  template:
+    metadata:
+      labels:
+        app: counting-service
+    spec:
+      containers:
+      - name: counting-service
+        image: topfunky/counting-service:0.0.1
+        ports:
+        - containerPort: 9001
+      initContainers:
+      - name: counting-init
+        image: topfunky/counting-init:0.0.9
+        env:
+        - name: POD_IP
+          valueFrom:
+            fieldRef:
+              fieldPath: status.podIP
+        - name: HOST_IP
+          valueFrom:
+            fieldRef:
+              fieldPath: status.hostIP
