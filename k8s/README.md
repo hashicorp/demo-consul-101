@@ -46,6 +46,96 @@ $ gcloud container clusters get-credentials my-consul-cluster \
       --zone us-west1-b --project my-project
 ```
 
+## Task 1: Run the simplest container
+
+In this task, you'll deploy a container that returns JSON that includes a number and the name of the host. You'll put a load balancer in front so you can see the output.
+
+### Create minimal yaml config
+
+Here is the simplest configuration that will deploy a container. Create a file named `counting-minimal.yaml` and paste these contents into it.
+
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: counting-minimal-pod
+  labels:
+    app: counting-service
+spec:
+  containers:
+    - name: counting-service
+      image: topfunky/counting-service:0.0.1
+      ports:
+      - containerPort: 9001
+```
+
+Apply to the cluster with:
+
+```sh
+$ kubectl apply -f yaml/counting-minimal.yaml
+
+pod/counting-minimal-pod created
+```
+
+Look at the Google web console. look at logs. You should see
+
+```plaintext
+Serving at http://localhost:9001
+```
+
+### Implement load balancer
+
+Add the following under the pod definition in the same `counting-minimal.yaml` file.
+
+```yaml
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: counting-minimal-load-balancer
+spec:
+  ports:
+  - protocol: "TCP"
+    port: 80
+    targetPort: 9001
+  selector:
+    app: counting-service
+  type: LoadBalancer
+
+```
+
+Apply with
+
+```sh
+$ kubectl apply -f yaml/counting-minimal.yaml
+
+pod/counting-minimal-pod unchanged
+service/counting-minimal-load-balancer created
+```
+
+Visit the Google Cloud console and go to "Services." You will see a service of type "Load Balancer" with an IP address next to it. Click the IP address and you'll see JSON output from the counting service.
+
+```json
+{"count":1,"hostname":"counting-minimal-pod"}
+```
+
+### Gather data
+
+```sh
+$ kubectl get pods
+```
+
+```sh
+$ kubectl logs counting-minimal-pod
+
+Serving at http://localhost:9001
+(Pass as PORT environment variable)
+```
+
+```sh
+$ kubectl get pods --output=json
+```
+
 ## Install helm to your cluster
 
 Install Helm to the k8s cluster.
