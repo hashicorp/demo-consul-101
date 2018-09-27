@@ -2,26 +2,51 @@
 
 IN PROCESS
 
-## Prerequisites
+## Prerequisites and Setup
 
-You must create a GCP IAM service account and authenticate with it on the command line.
+We assume that you have installed the `gcloud` command line tool, `helm`, and `kubectl`.
 
-We also assume that you have installed the `gcloud` command line tool and `helm`.
+https://cloud.google.com/sdk/docs/downloads-interactive
 
-### Service Account Details
+```sh
+$ gcloud init
+```
+
+Install `helm` and `kubectl` with Homebrew.
+
+```sh
+$ brew install kubernetes-cli
+$ brew install kubernetes-helm
+```
+
+### Service account authentication
+
+It's recommended that you create a GCP IAM service account and authenticate with it on the command line.
+
+https://console.cloud.google.com/iam-admin/serviceaccounts
 
 https://cloud.google.com/sdk/gcloud/reference/auth/activate-service-account
 
-    gcloud auth activate-service-account --key-file="my-consul-service-account.json"
+```sh
+$ gcloud auth activate-service-account --key-file="my-consul-service-account.json"
+```
 
-## Configure kubectl for cluster
+### Create a kubernetes cluster
 
-Go to the web UI, find cluster. Click `Connect` button. Copy the snippet and paste it into your terminal.
+https://console.cloud.google.com/kubernetes/list
 
-    gcloud container clusters get-credentials my-consul-cluster \
+Click "Create Cluster" and use the defaults. Find the "Create" button at the bottom of the drawer.
+
+### Configure kubectl to talk to your cluster
+
+Go to the web UI, find "Clusters". Click the "Connect" button. Copy the snippet and paste it into your terminal.
+
+```sh
+$ gcloud container clusters get-credentials my-consul-cluster \
       --zone us-west1-b --project my-project
+```
 
-## Helm
+## Install helm to your cluster
 
 Install Helm to the k8s cluster.
 
@@ -42,7 +67,7 @@ Create permissions for the service account.
 kubectl create clusterrolebinding add-on-cluster-admin --clusterrole=cluster-admin --serviceaccount=kube-system:default
 ```
 
-Edit values in `helm-consul-values.yml` if desired.
+Create a new file named `helm-consul-values.yml`. Edit to expose a load balancer so you can view the Consul UI.
 
 ```yaml
 global:
@@ -51,12 +76,15 @@ global:
 ui:
   service:
     type: "LoadBalancer"
+
+syncCatalog:
+  enabled: true
 ```
 
 Install Consul to the cluster, either from the stable repository or from the development [GitHub repo](https://github.com/hashicorp/consul-helm).
 
 ```sh
-helm install --name consul-release -f helm-consul-values.yaml stable/consul
+helm install -f helm-consul-values.yaml stable/consul
 ```
 
 ## Enable stub-dns
@@ -69,7 +97,7 @@ Find the name of your `dns` service with
 $ kubectl get svc
 ```
 
-Pass the service name to the stub dns script.
+Pass the service name to the stub DNS script in this demo repo.
 
 ```sh
 $ bin/enable-consul-stub-dns.sh lucky-penguin-consul-dns
@@ -77,28 +105,39 @@ $ bin/enable-consul-stub-dns.sh lucky-penguin-consul-dns
 
 ## Apply the resources
 
-Deploy with Kubernetes defined by all files in the `yaml` directory.
+Deploy an application with Kubernetes. Use all files in the `yaml` directory.
 
 ```sh
 $ kubectl apply -f yaml/
 ```
 
-Refresh your [GCP](https://console.cloud.google.com/kubernetes) console. Go to "Services" and you should see a public IP address for the `dashboard-service-deployment-service`. Visit it to see the dashboard and counting service which are communicating to each other using Consul service discovery.
+Refresh your [GCP](https://console.cloud.google.com/kubernetes) console. Go to "Services" and you should see a public IP address for the `dashboard-service-load-balancer`. Visit it to see the dashboard and counting service which are communicating to each other using Consul service discovery.
 
-## Debugging
+## Extra: Debugging
 
-    kubectl exec -it my-pod-name /bin/sh
+```sh
+# Connect to a container
+kubectl exec -it my-pod-name /bin/sh
 
-    apk add curl
+# Install tools on a container for curl and dig
+apk add curl
+apk add bind-tools
 
-    kubectl logs my-pod-name
+# View logs for a pod
+kubectl logs my-pod-name
+
+# See full configuration for debugging
+helm template stable/consul
+```
 
 ## Advanced
 
 Scale up deployments to start more counting services.
 
-    kubectl get deployments
-    kubectl scale deployments/counting-service-deployment --replicas=2
+```sh
+kubectl get deployments
+kubectl scale deployments/counting-service-deployment --replicas=2
+```
 
 ## Other/Random Notes
 
@@ -117,3 +156,13 @@ https://www.consul.io/api/agent/service.html#register-service
 ### Get Bearer Token for K8S Dashboard
 
     gcloud config config-helper --format=json
+
+### Catalog sync
+
+These permissions may be needed:
+
+```sh
+$ kubectl set subject clusterrolebinding system:node --group=system:nodes
+
+kubectl create rolebinding admin --clusterrole=admin --user="system:serviceaccount:default:default" --namespace=default
+```
