@@ -72,7 +72,7 @@ spec:
 Apply to the cluster with:
 
 ```sh
-$ kubectl apply -f yaml/counting-minimal.yaml
+$ kubectl apply -f yaml-minimal/counting-minimal.yaml
 
 pod/counting-minimal-pod created
 ```
@@ -83,7 +83,19 @@ Look at the Google web console. look at logs. You should see
 Serving at http://localhost:9001
 ```
 
+Connect to the pod from your local machine.
+
+```sh
+$ kubectl port-forward pod/counting-minimal-pod 9001:9001
+```
+
+Now visit http://localhost:9001/
+
+You should see JSON that contains a number and the name of the host.
+
 ### Implement load balancer
+
+Sometimes we want a pod to surface on an IP address outside of the cluster. Let's add a load balancer.
 
 Add the following under the pod definition in the same `counting-minimal.yaml` file.
 
@@ -107,7 +119,7 @@ spec:
 Apply with
 
 ```sh
-$ kubectl apply -f yaml/counting-minimal.yaml
+$ kubectl apply -f yaml-minimal/counting-minimal.yaml
 
 pod/counting-minimal-pod unchanged
 service/counting-minimal-load-balancer created
@@ -136,7 +148,34 @@ Serving at http://localhost:9001
 $ kubectl get pods --output=json
 ```
 
-## Install helm to your cluster
+Connect to a running pod.
+
+```sh
+$ kubectl exec -it counting-minimal-pod /bin/sh
+```
+
+Run commands like `env` or try to start `counting-service` manually with a different port.
+
+```sh
+$ PORT=9002 ./counting-service
+```
+
+Because this container is built from Alpine Linux, it doesn't have many development tools. You can install them:
+
+```sh
+$ apk add curl
+$ apk add bind-tools
+```
+
+### Delete the pod
+
+We're done with this pod, so delete it (and the load balancer).
+
+```sh
+$ kubectl delete -f yaml-minimal/counting-minimal.yaml
+```
+
+## Task 2: Install helm to your cluster
 
 Install Helm to the k8s cluster.
 
@@ -151,13 +190,17 @@ For more information on securing your installation see: https://docs.helm.sh/usi
 Happy Helming!
 ```
 
-Create permissions for the service account.
+Go to the Google Cloud console and choose "Services." Select "Show System Objects." You should see an object named `tiller-deploy`. This is the server side component of Helm.
+
+Next, create permissions for the service account so it can install Helm charts (packages).
 
 ```sh
-kubectl create clusterrolebinding add-on-cluster-admin --clusterrole=cluster-admin --serviceaccount=kube-system:default
+$ kubectl create clusterrolebinding add-on-cluster-admin --clusterrole=cluster-admin --serviceaccount=kube-system:default
+
+clusterrolebinding.rbac.authorization.k8s.io "add-on-cluster-admin" created
 ```
 
-Create a new file named `helm-consul-values.yml`. Edit to expose a load balancer so you can view the Consul UI.
+Create a new file named `helm-consul-values.yml`. Edit to expose a load balancer so you can view the Consul UI across the internet.
 
 ```yaml
 global:
@@ -177,7 +220,11 @@ Install Consul to the cluster, either from the stable repository or from the dev
 helm install -f helm-consul-values.yaml stable/consul
 ```
 
-## Enable stub-dns
+Verify that this worked by going to "Services" in the Google Cloud console. Find the load balancer for `*-consul-ui`. Click the IP address and you'll see the Consul web UI.
+
+## Task 3: Enable stub-dns
+
+In order for Consul service discovery to work smoothly, we need to enable Consul within the Kubernetes DNS system.
 
 https://www.consul.io/docs/platform/k8s/dns.html
 
@@ -187,13 +234,51 @@ Find the name of your `dns` service with
 $ kubectl get svc
 ```
 
-Pass the service name to the stub DNS script in this demo repo.
+Pass the service name matching `*-consul-dns` to the stub DNS script in this demo repo.
 
 ```sh
 $ bin/enable-consul-stub-dns.sh lucky-penguin-consul-dns
+
+configmap "kube-dns" configured
 ```
 
-## Apply the resources
+## Task 4: Use Consul K/V
+
+Let's use Consul's key/value store.
+
+Get a list of pods and find one that is running a Consul agent. We'll use this as an easy way to run Consul CLI commands.
+
+```sh
+$ kubectl get pods
+```
+
+Look for one with `consul` in the name. Connect to the running pod.
+
+```sh
+$ kubectl exec -it giggly-echidna-consul-5t2dc /bin/sh
+```
+
+Once connected, run a command that saves a value to Consul.
+
+```sh
+$ consul kv put redis/config/connections 5
+```
+
+Go to the Consul web UI and look in the **Key/Value** tab. You should see the hierarchy that contains the `redis/config/connections` value.
+
+Use the web UI to change the value to 10. Go back to the pod and `get` the value.
+
+```sh
+$ consul kv get redis/config/connections
+
+10
+```
+
+You're now running Consul's key/value store and can work with data.
+
+-> **NOTE:** Neither `envconsul` or `consul-template` are installed in this container and must be installed separately if you plan to use them.
+
+## Task 5: Deploy (apply) an application that uses Consul service discovery
 
 Deploy an application with Kubernetes. Use all files in the `yaml` directory.
 
@@ -201,23 +286,36 @@ Deploy an application with Kubernetes. Use all files in the `yaml` directory.
 $ kubectl apply -f yaml/
 ```
 
-Refresh your [GCP](https://console.cloud.google.com/kubernetes) console. Go to "Services" and you should see a public IP address for the `dashboard-service-load-balancer`. Visit it to see the dashboard and counting service which are communicating to each other using Consul service discovery.
+Refresh your [GCP](https://console.cloud.google.com/kubernetes) console. Go to "Services" and you should see a public IP address for the `dashboard-service-load-balancer`. Visit it to see the dashboard and counting service which are communicating to each other using Consul service discovery. (See code in `dashboard-service` for details.)
 
 ## Extra: Debugging
 
 ```sh
 # Connect to a container
-kubectl exec -it my-pod-name /bin/sh
-
-# Install tools on a container for curl and dig
-apk add curl
-apk add bind-tools
+$ kubectl exec -it my-pod-name /bin/sh
 
 # View logs for a pod
-kubectl logs my-pod-name
+$ kubectl logs my-pod-name
 
 # See full configuration for debugging
-helm template stable/consul
+$ helm template stable/consul
+```
+
+Within a pod (may require Consul pod or extra installation of `curl`).
+
+```sh
+# View all environment variables
+$ env
+
+# Install tools on a container for curl and dig
+$ apk add curl
+$ apk add bind-tools
+
+# Use the Consul HTTP API from any pod
+$ curl http://consul.service.consul:8500/v1/catalog/datacenters
+
+# Use service discovery
+$ ping dashboard.service.consul
 ```
 
 ## Advanced
@@ -225,9 +323,38 @@ helm template stable/consul
 Scale up deployments to start more counting services.
 
 ```sh
-kubectl get deployments
-kubectl scale deployments/counting-service-deployment --replicas=2
+$ kubectl get deployments
+$ kubectl scale deployments/counting-service-deployment --replicas=2
 ```
+
+Or in a deployment:
+
+```yaml
+spec:
+  replicas: 5
+```
+
+Health checks:
+
+```yaml
+spec:
+  containers:
+    - name: "..."
+      livenessProbe:
+        # an http probe
+        httpGet:
+          path: /health
+          port: 9002
+        # length of time to wait for a pod to initialize
+        # after pod startup, before applying health checking
+        initialDelaySeconds: 30
+        timeoutSeconds: 1
+      # Other content omitted
+```
+
+https://kubernetes.io/docs/tutorials/k8s101/
+
+https://kubernetes.io/docs/tutorials/k8s201/
 
 ## Other/Random Notes
 
