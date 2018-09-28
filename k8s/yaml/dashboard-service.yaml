@@ -1,46 +1,56 @@
-apiVersion: apps/v1
-kind: Deployment
+apiVersion: v1
+kind: Pod
 metadata:
   name: dashboard-service-deployment
+  labels:
+    app: "dashboard-service"
 spec:
+  containers:
+  - name: dashboard-service
+    image: topfunky/dashboard-service:0.0.2
+    ports:
+    - containerPort: 9002
+  # - name: dashboard-consul
+  #   image: "consul:1.2.3"
+  #   env:
+  #     - name: HOST_IP
+  #       valueFrom:
+  #         fieldRef:
+  #           fieldPath: status.hostIP
+  #   command:
+  #     - "/bin/sh"
+  #     - "-ec"
+  #     - |
+  #       exec /bin/consul connect proxy \
+  #         -http-addr=${HOST_IP}:8500 \
+  #         -service=dashboard \
+  #         -upstream="counting:9001"
+  initContainers:
+  - name: dashboard-init
+    image: topfunky/dashboard-init:0.0.4
+    env:
+    - name: POD_IP
+      valueFrom:
+        fieldRef:
+          fieldPath: status.podIP
+    - name: HOST_IP
+      valueFrom:
+        fieldRef:
+          fieldPath: status.hostIP
+---
+apiVersion: "v1"
+kind: "Service"
+metadata:
+  name: "dashboard-service-load-balancer"
+  namespace: "default"
+  labels:
+    app: "dashboard-service"
+spec:
+  ports:
+  - protocol: "TCP"
+    port: 80
+    targetPort: 9002
   selector:
-    matchLabels:
-      app: dashboard-service
-  minReadySeconds: 5
-  template:
-    metadata:
-      labels:
-        app: dashboard-service
-    spec:
-      containers:
-      - name: dashboard-service
-        image: topfunky/dashboard-service:0.0.2
-        ports:
-        - containerPort: 9002
-      # - name: dashboard-consul
-      #   image: "consul:1.2.3"
-      #   env:
-      #     - name: HOST_IP
-      #       valueFrom:
-      #         fieldRef:
-      #           fieldPath: status.hostIP
-      #   command:
-      #     - "/bin/sh"
-      #     - "-ec"
-      #     - |
-      #       exec /bin/consul connect proxy \
-      #         -http-addr=${HOST_IP}:8500 \
-      #         -service=dashboard \
-      #         -upstream="counting:9001"
-      initContainers:
-      - name: dashboard-init
-        image: topfunky/dashboard-init:0.0.4
-        env:
-        - name: POD_IP
-          valueFrom:
-            fieldRef:
-              fieldPath: status.podIP
-        - name: HOST_IP
-          valueFrom:
-            fieldRef:
-              fieldPath: status.hostIP
+    app: "dashboard-service"
+  type: "LoadBalancer"
+  loadBalancerIP: ""
