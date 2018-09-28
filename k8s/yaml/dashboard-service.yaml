@@ -10,21 +10,28 @@ spec:
     image: topfunky/dashboard-service:0.0.2
     ports:
     - containerPort: 9002
-  # - name: dashboard-consul
-  #   image: "consul:1.2.3"
-  #   env:
-  #     - name: HOST_IP
-  #       valueFrom:
-  #         fieldRef:
-  #           fieldPath: status.hostIP
-  #   command:
-  #     - "/bin/sh"
-  #     - "-ec"
-  #     - |
-  #       exec /bin/consul connect proxy \
-  #         -http-addr=${HOST_IP}:8500 \
-  #         -service=dashboard \
-  #         -upstream="counting:9001"
+    env:
+    - name: COUNTING_SERVICE_URL
+      value: "http://localhost:9001"
+  - name: consul
+    image: "consul:1.2.3"
+    env:
+    - name: POD_IP
+      valueFrom:
+        fieldRef:
+          fieldPath: status.podIP
+    - name: HOST_IP
+      valueFrom:
+        fieldRef:
+          fieldPath: status.hostIP
+    command:
+    - "/bin/sh"
+    - "-ec"
+    - |
+      exec /bin/consul connect proxy \
+        -http-addr=${HOST_IP}:8500 \
+        -service=dashboard \
+        -upstream="counting:9001"
   initContainers:
   - name: dashboard-init
     image: topfunky/dashboard-init:0.0.4
