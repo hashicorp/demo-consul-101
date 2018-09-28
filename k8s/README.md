@@ -278,15 +278,37 @@ You're now running Consul's key/value store and can work with data.
 
 -> **NOTE:** Neither `envconsul` or `consul-template` are installed in this container and must be installed separately if you plan to use them.
 
-## Task 5: Deploy (apply) an application that uses Consul service discovery
+## Task 5: Create an application that uses Consul service discovery
 
 Deploy an application with Kubernetes. Use all files in the `yaml` directory.
 
 ```sh
-$ kubectl apply -f yaml/
+$ kubectl create -f yaml/
 ```
 
 Refresh your [GCP](https://console.cloud.google.com/kubernetes) console. Go to "Services" and you should see a public IP address for the `dashboard-service-load-balancer`. Visit it to see the dashboard and counting service which are communicating to each other using Consul service discovery. (See code in `dashboard-service` for details.)
+
+## Task 6: Create an application that uses Consul Connect secure service segmentation
+
+The `counting` service needs to start an extra container running `consul` that manually starts its own proxy.
+
+```sh
+$ exec /bin/consul connect proxy \
+      -http-addr=${HOST_IP}:8500 \
+      -service=counting \
+      -service-addr=127.0.0.1:9001 \
+      -listen=${POD_IP}:19001 \
+      -register
+```
+
+The `dashboard` service needs to start an extra container running `consul` that manually starts an upstream proxy to the `counting` service proxy.
+
+```sh
+$ exec /bin/consul connect proxy \
+  -http-addr=${HOST_IP}:8500 \
+  -service=dashboard \
+  -upstream="counting:9001"
+```
 
 ## Extra: Debugging
 
@@ -355,6 +377,12 @@ spec:
 https://kubernetes.io/docs/tutorials/k8s101/
 
 https://kubernetes.io/docs/tutorials/k8s201/
+
+Networking: https://kubernetes.io/docs/tutorials/services/source-ip/
+
+```sh
+$ kubectl get nodes --out=yaml
+```
 
 ## Other/Random Notes
 
