@@ -19,17 +19,3 @@ curl \
     --request PUT \
     --data @dashboard-consul.rendered.json \
     "http://$HOST_IP:8500/v1/agent/service/register"
-
-# cat <<EOF > counting-proxy.rendered.json
-# {
-#   "Name": "counting-proxy",
-#   "Kind": "connect-proxy",
-#   "ProxyDestination": "counting",
-#   "Port": 9001
-# }
-# EOF
-#
-# curl \
-#     --request PUT \
-#     --data @counting-proxy.rendered.json \
-#     "http://$HOST_IP:8500/v1/agent/service/register"
