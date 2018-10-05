@@ -200,7 +200,7 @@ $ kubectl create clusterrolebinding add-on-cluster-admin --clusterrole=cluster-a
 clusterrolebinding.rbac.authorization.k8s.io "add-on-cluster-admin" created
 ```
 
-Create a new file named `helm-consul-values.yml`. Edit to expose a load balancer so you can view the Consul UI across the internet.
+Create a new file named `helm-consul-values.yaml`. Edit to expose a load balancer so you can view the Consul UI across the internet.
 
 ```yaml
 global:
