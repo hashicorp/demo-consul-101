@@ -214,10 +214,12 @@ syncCatalog:
   enabled: true
 ```
 
-Install Consul to the cluster, either from the stable repository or from the development [GitHub repo](https://github.com/hashicorp/consul-helm).
+Install Consul to the cluster. We'll use a clone of the development [GitHub repo](https://github.com/hashicorp/consul-helm).
 
 ```sh
-helm install -f helm-consul-values.yaml stable/consul
+$ git clone https://github.com/hashicorp/consul-helm.git
+
+$ helm install -f helm-consul-values.yaml ./consul-helm
 ```
 
 Verify that this worked by going to "Services" in the Google Cloud console. Find the load balancer for `*-consul-ui`. Click the IP address and you'll see the Consul web UI.
