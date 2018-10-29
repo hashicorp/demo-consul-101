@@ -6,7 +6,7 @@ metadata:
     "consul.hashicorp.com/connect-inject": "true"
 spec:
   containers:
-  - name: counting-service
+  - name: counting
     image: topfunky/counting-service:0.0.1
     ports:
     - containerPort: 9001

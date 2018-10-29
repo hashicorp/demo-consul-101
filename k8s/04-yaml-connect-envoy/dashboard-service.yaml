@@ -6,10 +6,10 @@ metadata:
     app: "dashboard"
   annotations:
     "consul.hashicorp.com/connect-inject": "true"
-    "consul.hashicorp.com/connect-service-upstreams": "counting-service:9001"
+    "consul.hashicorp.com/connect-service-upstreams": "counting:9001"
 spec:
   containers:
-  - name: dashboard-service
+  - name: dashboard
     image: topfunky/dashboard-service:0.0.2
     ports:
     - containerPort: 9002
