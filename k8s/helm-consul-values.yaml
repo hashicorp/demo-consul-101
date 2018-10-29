@@ -7,3 +7,10 @@ ui:
 
 # syncCatalog:
 #   enabled: true
+
+connectInject:
+  enabled: true
+
+client:
+  enabled: true
+  grpc: true
