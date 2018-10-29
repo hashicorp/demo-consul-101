@@ -5,5 +5,5 @@ ui:
   service:
     type: "LoadBalancer"
 
-syncCatalog:
-  enabled: true
+# syncCatalog:
+#   enabled: true
