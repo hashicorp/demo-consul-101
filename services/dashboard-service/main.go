@@ -87,8 +87,15 @@ type Count struct {
 func getAndParseCount() (Count, error) {
 	url := countingServiceURL
 
+	// NOTE: We use short timeouts so round robin load balancing
+	// of services can be experienced during lab demos.
+	tr := &http.Transport{
+		IdleConnTimeout: time.Second * 1,
+	}
+
 	httpClient := http.Client{
-		Timeout: time.Second * 2, // Maximum of 2 secs
+		Timeout:   time.Second * 2,
+		Transport: tr,
 	}
 
 	req, err := http.NewRequest(http.MethodGet, url, nil)
