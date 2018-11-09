@@ -69,10 +69,10 @@ spec:
       - containerPort: 9001
 ```
 
-Apply to the cluster with:
+This code has been created in this repository. Apply to the cluster with:
 
 ```sh
-$ kubectl apply -f yaml-minimal/counting-minimal.yaml
+$ kubectl apply -f 01-yaml-minimal
 
 pod/counting-minimal-pod created
 ```
@@ -97,7 +97,7 @@ You should see JSON that contains a number and the name of the host.
 
 Sometimes we want a pod to surface on an IP address outside of the cluster. Let's add a load balancer.
 
-Add the following under the pod definition in the same `counting-minimal.yaml` file.
+Add the following under the pod definition in the same `counting-minimal.yaml` file (or see the completed code in this repository).
 
 ```yaml
 ---
