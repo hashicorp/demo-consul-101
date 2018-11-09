@@ -5,12 +5,16 @@ ui:
   service:
     type: "LoadBalancer"
 
-# syncCatalog:
-#   enabled: true
-
 connectInject:
   enabled: true
 
 client:
   enabled: true
   grpc: true
+
+server:
+  replicas: 1
+  bootstrapExpect: 1
+  disruptionBudget:
+    enabled: true
+    maxUnavailable: 1
