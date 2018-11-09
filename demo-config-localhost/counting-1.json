@@ -10,7 +10,7 @@
       "timeout": "1s"
     },
     "connect": {
-      "proxy": {}
+      "sidecar_service": {}
     }
   }
 }
