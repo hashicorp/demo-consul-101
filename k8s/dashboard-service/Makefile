@@ -1,6 +1,6 @@
 BUILD_ID := $(shell git rev-parse --short HEAD 2>/dev/null || echo no-commit-id)
 IMAGE_NAME := topfunky/dashboard-service
-VERSION := 0.0.2
+VERSION := 0.0.3
 
 .DEFAULT_GOAL := help
 help: ## List targets & descriptions
