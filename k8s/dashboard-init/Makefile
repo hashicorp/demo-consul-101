@@ -1,5 +1,5 @@
 BUILD_ID := $(shell git rev-parse --short HEAD 2>/dev/null || echo no-commit-id)
-IMAGE_NAME := topfunky/dashboard-init
+IMAGE_NAME := hashicorp/dashboard-init
 VERSION := 0.0.4
 
 .DEFAULT_GOAL := help
