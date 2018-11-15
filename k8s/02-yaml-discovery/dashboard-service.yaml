@@ -15,7 +15,7 @@ spec:
       value: "http://counting.service.consul:9001"
   initContainers:
   - name: dashboard-init
-    image: topfunky/dashboard-init:0.0.4
+    image: hashicorp/dashboard-init:0.0.4
     env:
     - name: POD_IP
       valueFrom:

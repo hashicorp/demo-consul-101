@@ -10,7 +10,7 @@ spec:
     - containerPort: 9001
   initContainers:
   - name: counting-init
-    image: topfunky/counting-init:0.0.9
+    image: hashicorp/counting-init:0.0.9
     env:
     - name: POD_IP
       valueFrom:
