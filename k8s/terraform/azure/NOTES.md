@@ -1,5 +1,6 @@
 ## Azure AKS (Simple)
 
+```
 az ad sp create-for-rbac --skip-assignment
 
 // Then copy appId and password to terraform.tfvars
@@ -36,9 +37,11 @@ kubectl apply -f 04-yaml-connect-envoy
 
 // Then configure intentions
 // Then show container configuration
+```
 
 ## Azure AKS (Full)
 
+```
 az ad sp create-for-rbac --skip-assignment
 
 // Try
@@ -101,3 +104,4 @@ helm install -f helm-consul-values.yaml ./consul-helm
 kubectl get service consul-ui --watch
 
 kubectl apply -f 04-yaml-connect-envoy
+```
