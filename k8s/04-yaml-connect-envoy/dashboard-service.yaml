@@ -10,7 +10,7 @@ metadata:
 spec:
   containers:
   - name: dashboard
-    image: hashicorp/dashboard-service:0.0.3
+    image: hashicorp/dashboard-service:0.0.4
     ports:
     - containerPort: 9002
       name: http
