@@ -1,6 +1,10 @@
 # Kubernetes Services with Consul Service Discovery
 
-IN PROCESS
+This README briefly sketches the sequence of steps for setting up Google Cloud for Kubernetes and Consul.
+
+For a Microsoft Azure version, see the README and Terraform configs in the [terraform/azure](https://github.com/hashicorp/demo-consul-101/tree/master/k8s/terraform/azure) directory.
+
+For either, you can use the same YAML files to deploy the demo applications to the Kubernetes cluster.
 
 ## Prerequisites and Setup
 
