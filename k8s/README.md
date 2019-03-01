@@ -286,17 +286,21 @@ You're now running Consul's key/value store and can work with data.
 
 ## Task 5: Create an application that uses Consul service discovery
 
-Deploy an application with Kubernetes. Use all files in the `yaml` directory.
+Deploy an application with Kubernetes. The yaml files for deploying this application are in this repository. 
 
 ```sh
-$ kubectl create -f yaml/
+$ kubectl create -f 02-yaml-discovery/
 ```
 
 Refresh your [GCP](https://console.cloud.google.com/kubernetes) console. Go to "Services" and you should see a public IP address for the `dashboard-service-load-balancer`. Visit it to see the dashboard and counting service which are communicating to each other using Consul service discovery. (See code in `dashboard-service` for details.)
 
 ## Task 6: Create an application that uses Consul Connect secure service segmentation
 
-The `counting` service needs to start an extra container running `consul` that manually starts its own proxy.
+The `counting` service needs to start an extra container running `consul` that manually starts its own proxy. The consul binary can be found on your consul pod. The following pod is the same example from above.
+
+```sh
+kubectl exec -it giggly-echidna-consul-5t2dc /bin/sh
+```
 
 ```sh
 $ exec /bin/consul connect proxy \
