@@ -1,0 +1,33 @@
+version: '3'
+services:
+
+  dashboard:
+    container_name: dashboard
+    hostname: dashboard
+    image: 'hashicorp/dashboard-service:0.0.4'
+    restart: always
+    ports:
+      - '8080:8080'
+    environment:
+      PORT: 8080
+      COUNTING_SERVICE_URL: 'http://counting-service:9001'
+    depends_on:
+      - counting-service
+    networks:
+      - counting-service-network
+
+  counting-service:
+    container_name: counting-service
+    hostname: counting-service
+    image: 'hashicorp/counting-service:0.0.2'
+    restart: always
+    ports:
+      - '9001:9001'
+    environment:
+      PORT: 9001
+    networks:
+      - counting-service-network
+
+networks:
+  counting-service-network:
+    driver: bridge
