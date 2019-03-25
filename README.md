@@ -4,7 +4,20 @@ Demo code and microservices for the HashiCorp Consul 101 course.
 
 Email training@hashicorp.com or see https://www.hashicorp.com/training for details.
 
-## Quickstart
+## Quickstart: Docker Compose
+
+To run both microservices with Docker Compose (but without Consul), run `docker compose up`.
+
+```
+$ cd demo-consul-101
+$ docker-compose up
+```
+
+You can view the operational application dashboard at http://localhost:8080
+
+A subsequent evolution of the application would involve registering each service with Consul and using Consul DNS to configure services to discover each other.
+
+## Quickstart: Consul Connect
 
 More documentation is coming. In the meantime, you can start a local demo with:
 
