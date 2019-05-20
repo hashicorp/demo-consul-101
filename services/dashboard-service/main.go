@@ -27,6 +27,7 @@ func main() {
 	fmt.Printf("Starting server on http://0.0.0.0:%s\n", port)
 	fmt.Println("(Pass as PORT environment variable)")
 	fmt.Printf("Using counting service at %s\n", countingServiceURL)
+	fmt.Println("(Pass as COUNTING_SERVICE_URL environment variable)")
 
 	router := mux.NewRouter()
 	router.PathPrefix("/socket.io/").Handler(startWebsocket())
