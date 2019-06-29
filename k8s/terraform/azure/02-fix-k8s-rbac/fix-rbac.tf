@@ -1,5 +1,5 @@
-
-provider "kubernetes" {}
+provider "kubernetes" {
+}
 
 # Command line equivalent:
 #
@@ -61,3 +61,4 @@ resource "kubernetes_cluster_role_binding" "tiller-cluster-rule" {
     command = "helm init --service-account tiller"
   }
 }
+

@@ -2,8 +2,11 @@ variable "prefix" {
   default = "demo"
 }
 
-variable "appId" {}
-variable "password" {}
+variable "appId" {
+}
+
+variable "password" {
+}
 
 provider "azurerm" {
   version = "~> 1.27.0"
@@ -13,15 +16,15 @@ resource "azurerm_resource_group" "default" {
   name     = "${var.prefix}-rg"
   location = "West US 2"
 
-  tags {
+  tags = {
     environment = "Demo"
   }
 }
 
 resource "azurerm_kubernetes_cluster" "default" {
   name                = "${var.prefix}-aks"
-  location            = "${azurerm_resource_group.default.location}"
-  resource_group_name = "${azurerm_resource_group.default.name}"
+  location            = azurerm_resource_group.default.location
+  resource_group_name = azurerm_resource_group.default.name
   dns_prefix          = "${var.prefix}-k8s"
 
   agent_pool_profile {
@@ -33,15 +36,15 @@ resource "azurerm_kubernetes_cluster" "default" {
   }
 
   service_principal {
-    client_id     = "${var.appId}"
-    client_secret = "${var.password}"
+    client_id     = var.appId
+    client_secret = var.password
   }
 
   role_based_access_control {
     enabled = true
   }
 
-  tags {
+  tags = {
     environment = "Demo"
   }
 
@@ -49,14 +52,17 @@ resource "azurerm_kubernetes_cluster" "default" {
     # Load credentials to local environment so subsequent kubectl commands can be run
     command = <<EOS
       az aks get-credentials --resource-group ${azurerm_resource_group.default.name} --name ${self.name};
-    EOS
+
+EOS
+
   }
 }
 
 output "resource_group_name" {
-  value = "${azurerm_resource_group.default.name}"
+  value = azurerm_resource_group.default.name
 }
 
 output "kubernetes_cluster_name" {
-  value = "${azurerm_kubernetes_cluster.default.name}"
+  value = azurerm_kubernetes_cluster.default.name
 }
+
