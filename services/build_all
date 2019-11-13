@@ -1,0 +1,28 @@
+#!/usr/bin/env sh
+
+STARTDIR=`pwd`
+SERVICES="../counting-service ../dashboard-service"
+mkdir -p pkg/zips
+cd pkg
+
+OSES='windows solaris darwin'
+ARCHS='amd64 386'
+OSARCH='!darwin/386'
+gox -os="${OSES}" -arch="${ARCHS}" -osarch="${OSARCH}" ../counting-service ../dashboard-service
+
+OSES='linux freebsd'
+ARCHS='arm arm64 amd64 386'
+gox -os="${OSES}" -arch="${ARCHS}" ../counting-service ../dashboard-service
+
+FILES=`ls -pd * | grep -v /`
+echo $FILES
+echo "Checksumming and compressing builds..."
+cd zips
+for FILE in ${FILES}
+do
+  echo "  ${FILE}..."
+  zip ${FILE}.zip ../${FILE}
+  shasum --algorithm 256 ${FILE}.zip >> SHA256SUMS.txt
+done
+
+cd ${STARTDIR}

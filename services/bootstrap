@@ -1,0 +1,10 @@
+# Build Deps
+go get github.com/mitchellh/gox
+
+# Common deps
+go get github.com/gorilla/mux
+
+# Dashboard deps
+go get github.com/graarh/golang-socketio
+go get github.com/GeertJohan/go.rice
+go get github.com/GeertJohan/go.rice/rice
