@@ -56,9 +56,5 @@ resource "kubernetes_cluster_role_binding" "tiller-cluster-rule" {
     name      = "tiller"
     api_group = ""
   }
-
-  provisioner "local-exec" {
-    command = "helm init --service-account tiller"
-  }
 }
 
