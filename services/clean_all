@@ -1,0 +1,6 @@
+#!/usr/bin/env sh
+
+echo "Cleaning up build artifacts..."
+rm -rf pkg
+echo "Complete"
+
