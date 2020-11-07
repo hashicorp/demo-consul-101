@@ -21,7 +21,8 @@ for FILE in ${FILES}
 do
   echo "  ${FILE}..."
   zip zips/${FILE}.zip ${FILE}
-  shasum --algorithm 256 zips/${FILE}.zip >> zips/SHA256SUMS.txt
 done
+cd zips
+shasum --algorithm 256 *.zip > SHA256SUMS.txt
 
 cd ${STARTDIR}
