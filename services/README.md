@@ -65,4 +65,4 @@ Requires an installed and configured golang development environment
         +-- dashboard-service_windows_amd64.exe.zip
     ```
 
-- **Clean up build artifacts with `clean.sh`
+- **Clean up build artifacts with `./clean_all`
