@@ -5,8 +5,8 @@ metadata:
   labels:
     app: "dashboard"
   annotations:
-    "consul.hashicorp.com/connect-inject": "true"
-    "consul.hashicorp.com/connect-service-upstreams": "counting:9001"
+    consul.hashicorp.com/connect-inject: "true"
+    consul.hashicorp.com/connect-service-upstreams: "counting:9001"
 spec:
   containers:
   - name: dashboard
@@ -17,23 +17,11 @@ spec:
     env:
     - name: COUNTING_SERVICE_URL
       value: "http://localhost:9001"
-  initContainers:
-  - name: dashboard-init
-    image: hashicorp/dashboard-init:0.0.4
-    env:
-    - name: POD_IP
-      valueFrom:
-        fieldRef:
-          fieldPath: status.podIP
-    - name: HOST_IP
-      valueFrom:
-        fieldRef:
-          fieldPath: status.hostIP
 ---
 apiVersion: "v1"
 kind: "Service"
 metadata:
-  name: "dashboard-service-load-balancer"
+  name: "dashboard-load-balancer"
   namespace: "default"
   labels:
     app: "dashboard"

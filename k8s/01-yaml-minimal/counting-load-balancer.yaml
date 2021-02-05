@@ -8,5 +8,5 @@ spec:
     port: 80
     targetPort: 9001
   selector:
-    app: counting-service
+    app: counting
   type: LoadBalancer

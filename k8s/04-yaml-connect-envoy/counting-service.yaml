@@ -3,7 +3,7 @@ kind: Pod
 metadata:
   name: counting
   annotations:
-    "consul.hashicorp.com/connect-inject": "true"
+    consul.hashicorp.com/connect-inject: "true"
 spec:
   containers:
   - name: counting
@@ -11,15 +11,3 @@ spec:
     ports:
     - containerPort: 9001
       name: http
-  initContainers:
-  - name: counting-init
-    image: hashicorp/counting-init:0.0.9
-    env:
-    - name: POD_IP
-      valueFrom:
-        fieldRef:
-          fieldPath: status.podIP
-    - name: HOST_IP
-      valueFrom:
-        fieldRef:
-          fieldPath: status.hostIP
