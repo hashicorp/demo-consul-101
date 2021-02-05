@@ -204,7 +204,7 @@ connectInject:
 Install Consul to the cluster using he values file.
 
 ```
-$ helm install -f helm-consul-values.yaml ./consul-helm
+$ helm install -f helm-consul-values.yaml ./consul-helm --version "0.29.0"
 ```
 
 Verify that this worked by going to "Services" in the Google Cloud console. Find the load balancer for `*-consul-ui`.
