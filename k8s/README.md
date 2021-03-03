@@ -183,7 +183,7 @@ add the hashicorp Helm repo using `helm repo add`.
 $ helm repo add hashicorp https://helm.releases.hashicorp.com
 ```
 
-Review the file in this directory named `helm-consul-values.yaml`. It has a minimal Consul configuration that will allow
+Review the file in this directory named `config.yaml`. It has a minimal Consul configuration that will allow
 you to get started using Consul.
 
 ```yaml
@@ -204,7 +204,7 @@ connectInject:
 Install Consul to the cluster using he values file.
 
 ```
-$ helm install -f helm-consul-values.yaml ./consul-helm --version "0.29.0"
+$ helm install -f config.yaml ./consul-helm --version "0.29.0"
 ```
 
 Verify that this worked by going to "Services" in the Google Cloud console. Find the load balancer for `*-consul-ui`.
