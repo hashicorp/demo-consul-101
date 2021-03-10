@@ -4,10 +4,10 @@ kind: Pod
 metadata:
   name: counting-minimal-pod
   labels:
-    app: counting-service
+    app: counting
 spec:
   containers:
-    - name: counting-service
+    - name: counting
       image: hashicorp/counting-service:0.0.2
       ports:
       - containerPort: 9001

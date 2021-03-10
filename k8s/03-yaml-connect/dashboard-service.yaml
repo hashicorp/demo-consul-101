@@ -1,63 +1,32 @@
 apiVersion: v1
 kind: Pod
 metadata:
-  name: dashboard-service
+  name: dashboard
   labels:
-    app: "dashboard-service"
+    app: dashboard
 spec:
   containers:
-  - name: dashboard-service
+  - name: dashboard
     image: hashicorp/dashboard-service:0.0.3
     ports:
     - containerPort: 9002
     env:
     - name: COUNTING_SERVICE_URL
       value: "http://localhost:9001"
-  - name: consul
-    image: "consul:1.3.0"
-    env:
-    - name: POD_IP
-      valueFrom:
-        fieldRef:
-          fieldPath: status.podIP
-    - name: HOST_IP
-      valueFrom:
-        fieldRef:
-          fieldPath: status.hostIP
-    command:
-    - "/bin/sh"
-    - "-ec"
-    - |
-      exec /bin/consul connect proxy \
-        -http-addr=${HOST_IP}:8500 \
-        -service=dashboard \
-        -upstream="counting:9001"
-  initContainers:
-  - name: dashboard-init
-    image: hashicorp/dashboard-init:0.0.4
-    env:
-    - name: POD_IP
-      valueFrom:
-        fieldRef:
-          fieldPath: status.podIP
-    - name: HOST_IP
-      valueFrom:
-        fieldRef:
-          fieldPath: status.hostIP
 ---
 apiVersion: "v1"
 kind: "Service"
 metadata:
-  name: "dashboard-service-load-balancer"
+  name: "dashboard-load-balancer"
   namespace: "default"
   labels:
-    app: "dashboard-service"
+    app: dashboard
 spec:
   ports:
   - protocol: "TCP"
     port: 80
     targetPort: 9002
   selector:
-    app: "dashboard-service"
+    app: "dashboard"
   type: "LoadBalancer"
   loadBalancerIP: ""

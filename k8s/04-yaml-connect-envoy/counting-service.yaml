@@ -1,25 +1,52 @@
+---
 apiVersion: v1
-kind: Pod
+kind: Service
 metadata:
   name: counting
-  annotations:
-    "consul.hashicorp.com/connect-inject": "true"
 spec:
-  containers:
-  - name: counting
-    image: hashicorp/counting-service:0.0.2
-    ports:
-    - containerPort: 9001
-      name: http
-  initContainers:
-  - name: counting-init
-    image: hashicorp/counting-init:0.0.9
-    env:
-    - name: POD_IP
-      valueFrom:
-        fieldRef:
-          fieldPath: status.podIP
-    - name: HOST_IP
-      valueFrom:
-        fieldRef:
-          fieldPath: status.hostIP
+  selector:
+    app: counting
+  ports:
+    - name: http
+      protocol: TCP
+      port: 9001
+      targetPort: 9001
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: counting
+automountServiceAccountToken: true
+---
+apiVersion: consul.hashicorp.com/v1alpha1
+kind: ServiceDefaults
+metadata:
+  name: counting
+spec:
+  protocol: "http"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: counting
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      service: counting
+      app: counting
+  template:
+    metadata:
+      labels:
+        service: counting
+        app: counting
+      annotations:
+        consul.hashicorp.com/connect-inject: "true"
+        consul.hashicorp.com/connect-service-upstreams: "dashboard:9002"
+    spec:
+      serviceAccountName: counting
+      containers:
+      - name: counting
+        image: hashicorp/counting-service:0.0.2
+        ports:
+          - containerPort: 9001

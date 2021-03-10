@@ -1,0 +1,15 @@
+global:
+  datacenter: dc1
+
+ui:
+  service:
+    type: "LoadBalancer"
+
+connectInject:
+  enabled: true
+
+controller:
+  enabled: true
+
+server:
+  replicas: 1
