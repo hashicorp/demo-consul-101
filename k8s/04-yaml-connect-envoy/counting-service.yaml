@@ -42,7 +42,6 @@ spec:
         app: counting
       annotations:
         consul.hashicorp.com/connect-inject: "true"
-        consul.hashicorp.com/connect-service-upstreams: "dashboard:9002"
     spec:
       serviceAccountName: counting
       containers:
