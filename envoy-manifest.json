@@ -1,0 +1,22 @@
+{
+  "latestVersion": "1.18.3",
+  "versions": {
+    "1.18.3": {
+      "releaseDate": "2021-05-11",
+      "tarballs": {
+        "darwin/amd64": "https://archive.tetratelabs.io/envoy/download/v1.18.3/envoy-v1.18.3-darwin-amd64.tar.xz",
+        "darwin/arm64": "https://archive.tetratelabs.io/envoy/download/v1.18.3/envoy-v1.18.3-darwin-amd64.tar.xz",
+        "linux/amd64": "https://archive.tetratelabs.io/envoy/download/v1.18.3/envoy-v1.18.3-linux-amd64.tar.xz",
+        "linux/arm64": "https://archive.tetratelabs.io/envoy/download/v1.18.3/envoy-v1.18.3-linux-arm64.tar.xz",
+        "windows/amd64": "https://archive.tetratelabs.io/envoy/download/v1.18.3/envoy-v1.18.3-windows-amd64.tar.xz"
+      }
+    }
+  },
+  "sha256sums": {
+    "envoy-v1.18.3-darwin-amd64.tar.xz": "cb27be135f0d48167b756d17fa9117ed6295ee3f69e4db7900b94ddffef463e1",
+    "envoy-v1.18.3-darwin-arm64.tar.xz": "cb27be135f0d48167b756d17fa9117ed6295ee3f69e4db7900b94ddffef463e1",
+    "envoy-v1.18.3-linux-amd64.tar.xz": "10e1c6bc354018578f02c97358d3bbc9a26d4989cf752963611e69dac52656f4",
+    "envoy-v1.18.3-linux-arm64.tar.xz": "367d61bf246d56cc24949574977edefa4649ad2072c08d57a8bd63c44d991d25",
+    "envoy-v1.18.3-windows-amd64.tar.xz": "1274f55b3022bc1331aed41089f189094e00729981fe132ce00aac6272ea0770"  
+  }
+}
