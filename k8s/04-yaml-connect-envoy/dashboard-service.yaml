@@ -42,7 +42,6 @@ spec:
         app: dashboard
       annotations:
         consul.hashicorp.com/connect-inject: "true"
-        consul.hashicorp.com/connect-service-upstreams: "counting:9001"
     spec:
       serviceAccountName: dashboard
       containers:
@@ -53,21 +52,21 @@ spec:
           name: http
         env:
         - name: COUNTING_SERVICE_URL
-          value: "http://localhost:9001"
+          value: "http://counting"
 ---
-#apiVersion: "v1"
-#kind: "Service"
-#metadata:
-#  name: "dashboard-load-balancer"
-#  namespace: "default"
-#  labels:
-#    app: "dashboard"
-#spec:
-#  ports:
-#  - protocol: "TCP"
-#    port: 80
-#    targetPort: 9002
-#  selector:
-#    app: "dashboard"
-#  type: "LoadBalancer"
+apiVersion: "v1"
+kind: "Service"
+metadata:
+ name: "dashboard-load-balancer"
+ namespace: "default"
+ labels:
+   app: "dashboard"
+spec:
+ ports:
+ - protocol: "TCP"
+   port: 80
+   targetPort: 9002
+ selector:
+   app: "dashboard"
+ type: "LoadBalancer"
 #  loadBalancerIP: ""
