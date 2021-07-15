@@ -51,7 +51,7 @@ resource "azurerm_kubernetes_cluster" "default" {
   provisioner "local-exec" {
     # Load credentials to local environment so subsequent kubectl commands can be run
     command = <<EOS
-      az aks get-credentials --resource-group ${azurerm_resource_group.default.name} --name ${self.name};
+      az aks get-credentials --resource-group ${azurerm_resource_group.default.name} --name ${self.name} --overwrite-existing;
 
 EOS
 
