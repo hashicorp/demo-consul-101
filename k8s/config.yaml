@@ -1,6 +1,5 @@
 global:
-  datacenter: dc1
-
+  name: consul
 ui:
   service:
     type: "LoadBalancer"
