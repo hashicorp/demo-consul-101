@@ -4,12 +4,13 @@ kind: Service
 metadata:
   name: dashboard
 spec:
+  type: "LoadBalancer"
   selector:
     app: dashboard
   ports:
     - name: http
       protocol: TCP
-      port: 9002
+      port: 80
       targetPort: 9002
 ---
 apiVersion: v1
@@ -23,7 +24,7 @@ kind: ServiceDefaults
 metadata:
   name: dashboard
 spec:
-  protocol: "http"
+  protocol: "tcp"
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -42,7 +43,7 @@ spec:
         app: dashboard
       annotations:
         consul.hashicorp.com/connect-inject: "true"
-        consul.hashicorp.com/connect-service-upstreams: "counting:9001"
+        consul.hashicorp.com/transparent-proxy-exclude-inbound-ports: "9002"  
     spec:
       serviceAccountName: dashboard
       containers:
@@ -53,21 +54,4 @@ spec:
           name: http
         env:
         - name: COUNTING_SERVICE_URL
-          value: "http://localhost:9001"
----
-#apiVersion: "v1"
-#kind: "Service"
-#metadata:
-#  name: "dashboard-load-balancer"
-#  namespace: "default"
-#  labels:
-#    app: "dashboard"
-#spec:
-#  ports:
-#  - protocol: "TCP"
-#    port: 80
-#    targetPort: 9002
-#  selector:
-#    app: "dashboard"
-#  type: "LoadBalancer"
-#  loadBalancerIP: ""
+          value: "http://counting"
