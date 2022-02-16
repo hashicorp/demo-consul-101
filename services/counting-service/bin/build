@@ -10,8 +10,42 @@ cd dist/linux-amd64
 zip $APPNAME.zip $APPNAME
 cd ../../
 
-# Build for local platform
+# Build linux version
+GOOS=linux GOARCH=arm64 go build -v .
+mkdir -p dist/linux-amd64
+mv $APPNAME dist/linux-amd64/
+cd dist/linux-amd64
+zip $APPNAME.zip $APPNAME
+cd ../../
+
+# Build for Mac OSX (ARM)
+GOOS=darwin GOARCH=arm64 go build -v .
+mkdir -p dist/darwin-amd64
+mv $APPNAME dist/darwin-amd64/
+cd dist/darwin-amd64
+zip $APPNAME.zip $APPNAME
+cd ../../
+
+
+# Build for Mac OSX
 GOOS=darwin GOARCH=amd64 go build -v .
+mkdir -p dist/darwin-amd64
+mv $APPNAME dist/darwin-amd64/
+cd dist/darwin-amd64
+zip $APPNAME.zip $APPNAME
+cd ../../
+
+
+GOOS=windows GOARCH=amd64 go build -v .
+mkdir -p dist/darwin-amd64
+mv $APPNAME dist/darwin-amd64/
+cd dist/darwin-amd64
+zip $APPNAME.zip $APPNAME
+cd ../../
+
+
+# Build for Windows
+GOOS=windows GOARCH=amd64 go build -v .
 mkdir -p dist/darwin-amd64
 mv $APPNAME dist/darwin-amd64/
 cd dist/darwin-amd64

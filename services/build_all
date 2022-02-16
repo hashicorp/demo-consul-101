@@ -1,19 +1,29 @@
-#!/usr/bin/env sh
+#!/usr/bin/env bash
 
 STARTDIR=`pwd`
-SERVICES="../counting-service ../dashboard-service"
+SERVICES="../counting-service/"
 mkdir -p pkg/zips
-cd pkg
+cd counting-service/
 
-OSES='windows solaris darwin'
+
+OSES='windows solaris'
 ARCHS='amd64 386'
+OSARCH='!darwin/386'
+gox -os="${OSES}" -arch="${ARCHS}" -osarch="${OSARCH}" "${SERVICES}"
+
+
+OSES='darwin'
+ARCHS='amd64 arm64'
 OSARCH='!darwin/386'
 gox -os="${OSES}" -arch="${ARCHS}" -osarch="${OSARCH}" ${SERVICES}
 
+
 OSES='linux freebsd'
 ARCHS='arm arm64 amd64 386'
-gox -os="${OSES}" -arch="${ARCHS}" ${SERVICES}
+gox -os="${OSES}" -arch="${ARCHS}" "${SERVICES}"
 
+mv counting-service* ../pkg/
+cd ../pkg/
 FILES=`ls -pd * | grep -v /`
 echo $FILES
 echo "Checksumming and compressing builds..."
@@ -25,3 +35,33 @@ do
 done
 
 cd ${STARTDIR}
+
+
+cd dashboard-service/
+SERVICES="../dashboard-service/"
+
+OSES='windows solaris'
+ARCHS='amd64 386'
+OSARCH='!darwin/386'
+gox -os="${OSES}" -arch="${ARCHS}" -osarch="${OSARCH}" "${SERVICES}"
+
+OSES='darwin'
+ARCHS='amd64 arm64'
+OSARCH='!darwin/386'
+gox -os="${OSES}" -arch="${ARCHS}" -osarch="${OSARCH}" ${SERVICES}
+
+OSES='linux freebsd'
+ARCHS='arm arm64 amd64 386'
+gox -os="${OSES}" -arch="${ARCHS}" "${SERVICES}"
+
+mv dashboard-service* ../pkg/
+cd ../pkg/
+FILES=`ls -pd * | grep -v /`
+echo $FILES
+echo "Checksumming and compressing builds..."
+for FILE in ${FILES}
+do
+  echo "  ${FILE}..."
+  zip zips/${FILE}.zip ${FILE}
+  shasum --algorithm 256 zips/${FILE}.zip >> zips/SHA256SUMS.txt
+done
