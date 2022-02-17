@@ -38,6 +38,7 @@ cd ${STARTDIR}
 
 
 cd dashboard-service/
+rice embed-go
 SERVICES="../dashboard-service/"
 
 OSES='windows solaris'
