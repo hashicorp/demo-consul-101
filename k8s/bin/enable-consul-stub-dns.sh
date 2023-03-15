@@ -1,4 +1,7 @@
 #!/usr/bin/env sh
+# Copyright (c) HashiCorp, Inc.
+# SPDX-License-Identifier: MPL-2.0
+
 
 # Loads a ConfigMap that allows pods to use the `.consul` TLD.
 # https://www.consul.io/docs/platform/k8s/dns.html

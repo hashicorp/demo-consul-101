@@ -1,3 +1,8 @@
+/**
+ * Copyright (c) HashiCorp, Inc.
+ * SPDX-License-Identifier: MPL-2.0
+ */
+
 /*!
  * Socket.IO v2.2.0
  * (c) 2014-2018 Guillermo Rauch
