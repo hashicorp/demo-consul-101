@@ -1,5 +1,5 @@
 #!/usr/bin/env sh
-# Copyright IBM Corp. 2018, 2023
+# Copyright IBM Corp. 2018, 2026
 # SPDX-License-Identifier: MPL-2.0
 
 
